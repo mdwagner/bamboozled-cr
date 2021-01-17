@@ -4,6 +4,10 @@
 /.shards/
 *.dwarf
 
+# temp
+/src/lib
+/spec/spec
+
 # Libraries don't need dependency lock
 # Dependencies will be locked in applications that use them
 /shard.lock
