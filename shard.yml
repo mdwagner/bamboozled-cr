@@ -1,0 +1,17 @@
+name: bamboozled
+version: 0.1.0
+
+authors:
+  - Michael Wagner <mdwranger@gmail.com>
+
+description: |
+  A Crystal wrapper for the BambooHR API http://www.bamboohr.com/
+
+crystal: 0.35.1
+
+license: MIT
+
+development_dependencies:
+  webmock:
+    github: manastech/webmock.cr
+    branch: master
