@@ -5,35 +5,38 @@ module Bamboozled
     class ApplicantTracking < Base
       APPLICATION_STATUS_GROUPS = %w[ALL ALL_ACTIVE NEW ACTIVE INACTIVE HIRED]
 
-      JOB_STATUS_GROUPS = %w(ALL DRAFT_AND_OPEN Open Filled Draft Deleted On\ Hold Canceled)
+      JOB_STATUS_GROUPS = %w[ALL DRAFT_AND_OPEN Open Filled Draft Deleted On\ Hold Canceled]
 
       # Get a list of job summaries -- GET /jobs
-      def job_summaries(params = {})
+      def job_summaries(params)
         query = {
-          "statusGroups": "ALL",     # JOB_STATUS_GROUPS
-          "sortBy":       "created", # "count", "title", "lead", "created", "status"
-          "sortOrder":    "ASC"      # "ASC", "DESC"
-        }.merge(params)
+          "statusGroups" => "ALL",     # JOB_STATUS_GROUPS
+          "sortBy" =>       "created", # "count", "title", "lead", "created", "status"
+          "sortOrder" =>    "ASC"      # "ASC", "DESC"
+        }
+        query.merge!(params) if params
+        options = Halite::Options.new(params: query)
 
-        request(:get, "applicant_tracking/jobs", query: query)
-
-
-        request("GET", "applicant_tracking/jobs") do |options|
-          options.params
-        end
+        request("GET", "applicant_tracking/jobs", options: options)
       end
 
       # Get a list of applications, following pagination -- GET /applications
-      def applications(params = {}) # rubocop:disable Style/OptionHash
-        page_limit = params.delete(:page_limit) { 1 }
+      def applications(params)
+        page_limit = params.delete("page_limit") { 1 }
 
-        applications_array = []
+        apps = [] of JSON::Any
+
         1.upto page_limit do |i|
-          response = request_applications(params.merge(page: i))
-          applications_array += response["applications"]
-          break if response["paginationComplete"]
+          response = request_applications(params.merge("page" => i))
+
+          if response.json.try &.[]?("applications")
+            apps << response.json["applications"]
+          end
+
+          break if response.json.try &.[]?("paginationComplete")
         end
-        applications_array
+
+        apps
       end
 
       # Get the details of an application -- GET /applications/:id

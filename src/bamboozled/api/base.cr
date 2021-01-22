@@ -1,5 +1,10 @@
 module Bamboozled
   module API
+    record Response,
+      headers : HTTP::Headers,
+      json : JSON::Any? = nil,
+      xml : XML::Node? = nil
+
     class Base
       property subdomain : String
       property api_key : String
@@ -8,67 +13,65 @@ module Bamboozled
       def initialize(@subdomain, @api_key, @http_options)
       end
 
-      protected def request(
-        method : String,
-        path : String
-      )
+      protected def request(method : String, path : String, options : Halite::Options?)
+        request(method: method, path: path) do |opts|
+          opts.merge!(options) if options
+        end
+      end
+
+      protected def request(method : String, path : String)
         client = Halite::Client.new
 
         client.endpoint(path_prefix)
-        client.basic_auth(*auth)
+        client.basic_auth(auth)
         client.user_agent("Bamboozled/#{Bamboozled::VERSION}")
-        client.headers(accept: "application/json")
-        client.headers(content_type: "text/plain")
+        client.headers(accept: "application/json", content_type: "text/plain")
 
         options = Halite::Options.new
         yield options
 
         response = client.request(method, path, http_options.merge(options))
-        params : HttpErrorParams = {
-          "path"     => path,
-          "method"   => method,
-          "options"  => options,
-          "response" => response.inspect.to_s,
-        }
 
         case response.status_code
         when 200..201
+          res = Response.new(headers: response.headers)
+
           begin
-            if !response.to_s
-              { "headers" => response.headers }
-            else
-              response.parse("json")
+            if response.to_s
+              res = res.copy_with(json: response.parse("json"))
+              res = res.copy_with(xml: XML.parse(response.to_s))
             end
           rescue
-            XML.parse(response.to_s)
           end
+
+          res
         when 400
-          raise Bamboozled::BadRequest.new(response, params)
+          raise Bamboozled::BadRequest.new
         when 401
-          raise Bamboozled::AuthenticationFailed.new(response, params)
+          raise Bamboozled::AuthenticationFailed.new
         when 403
-          raise Bamboozled::Forbidden.new(response, params)
+          raise Bamboozled::Forbidden.new
         when 404
-          raise Bamboozled::NotFound.new(response, params)
+          raise Bamboozled::NotFound.new
         when 406
-          raise Bamboozled::NotAcceptable.new(response, params)
+          raise Bamboozled::NotAcceptable.new
         when 409
-          raise Bamboozled::Conflict.new(response, params)
+          raise Bamboozled::Conflict.new
         when 429
-          raise Bamboozled::LimitExceeded.new(response, params)
+          raise Bamboozled::LimitExceeded.new
         when 500
-          raise Bamboozled::InternalServerError.new(response, params)
+          raise Bamboozled::InternalServerError.new
         when 502
-          raise Bamboozled::GatewayError.new(response, params)
+          raise Bamboozled::GatewayError.new
         when 503
-          raise Bamboozled::ServiceUnavailable.new(response, params)
+          raise Bamboozled::ServiceUnavailable.new
         else
-          raise Bamboozled::InformBamboo.new(response, params)
+          raise Bamboozled::InformBamboo.new
         end
       end
 
       private def auth
-        {api_key, "x"}
+        {user: api_key, pass: "x"}
       end
 
       private def path_prefix
