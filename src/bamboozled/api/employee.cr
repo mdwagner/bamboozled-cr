@@ -25,9 +25,11 @@ module Bamboozled
       end
 
       def find(employee_id, fields = nil)
-        fields = FieldCollection.wrap(fields).to_csv
+        options = Halite::Options.new(params: {
+          "fields" => FieldCollection.wrap(fields).to_csv
+        })
 
-        request("GET", "employees/#{employee_id}?fields=#{fields}")
+        request("GET", "employees/#{employee_id}", options: options)
       end
 
       def last_changed(date = Time.parse!("2011-06-05T00:00:00+00:00", "%FT%T%:z"), type = nil)
@@ -43,20 +45,24 @@ module Bamboozled
 
       # Tabular data
       {% for action in %w[job_info employment_status compensation dependents contacts] %}
-        def {{action.id}}(id)
-          request("GET", "employees/#{id}/tables/{{ action.camelcase(lower: true).id }}")
-        end
+      def {{action.id}}(id)
+        request("GET", "employees/#{id}/tables/{{ action.camelcase(lower: true).id }}")
+      end
       {% end %}
 
       def time_off_estimate(employee_id, end_date)
-        end_date = end_date.strftime("%F") unless end_date.is_a?(String)
-        request(:get, "employees/#{employee_id}/time_off/calculator?end=#{end_date}")
+        options = Halite::Options.new(params: {
+          "end" => !end_date.is_a?(String) ? end_date.to_s("%F") : end_date
+        })
+
+        request("GET", "employees/#{employee_id}/time_off/calculations", options: options)
       end
 
       def photo_binary(employee_id)
-        request(:get, "employees/#{employee_id}/photo/small")
+        request("GET", "employees/#{employee_id}/photo/small")
       end
 
+      # TODO
       def photo_url(employee)
         if (Float(employee) rescue false)
           e = find(employee, ['workEmail', 'homeEmail'])
@@ -68,6 +74,7 @@ module Bamboozled
         "http://#{@subdomain}.bamboohr.com/employees/photos/?h=#{digest}"
       end
 
+      # TODO
       def add(employee_details)
         details = generate_xml(employee_details)
         options = {body: details}
@@ -75,6 +82,7 @@ module Bamboozled
         request(:post, "employees/", options)
       end
 
+      # TODO
       def update(bamboo_id, employee_details)
         details = generate_xml(employee_details)
         options = { body: details }
@@ -82,15 +90,18 @@ module Bamboozled
         request(:post, "employees/#{bamboo_id}", options)
       end
 
-      private
-
-      def generate_xml(employee_details)
-        "".tap do |xml|
-          xml << "<employee>"
-          employee_details.each { |k, v| xml << "<field id='#{k}'>#{v}</field>" }
-          xml << "</employee>"
+      private def generate_xml(employee_details)
+        String.build do |s|
+          XML.build_fragment(s, quote_char: '\'') do |xml|
+            xml.element("employee") do
+              employee_details.map do |(k, v)|
+                xml.element("field", id: k) { xml.text(v) }
+              end
+            end
+          end
         end
       end
+
     end
   end
 end
