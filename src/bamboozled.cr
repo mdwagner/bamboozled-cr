@@ -4,6 +4,7 @@ require "xml"
 require "uri"
 require "halite"
 require "./bamboozled/api/base"
+require "./bamboozled/api/field_collection"
 require "./bamboozled/**"
 
 module Bamboozled
