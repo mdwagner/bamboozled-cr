@@ -13,13 +13,13 @@ module Bamboozled
       def initialize(@subdomain, @api_key, @http_options)
       end
 
-      protected def request(method : String, path : String, options : Halite::Options?)
-        request(method: method, path: path) do |opts|
+      protected def request(method, path, options = nil)
+        request(method, path) do |opts|
           opts.merge!(options) if options
         end
       end
 
-      protected def request(method : String, path : String)
+      protected def request(method, path)
         client = Halite::Client.new
 
         client.endpoint(path_prefix)

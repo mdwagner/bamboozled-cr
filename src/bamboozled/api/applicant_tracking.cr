@@ -8,26 +8,24 @@ module Bamboozled
       JOB_STATUS_GROUPS = %w[ALL DRAFT_AND_OPEN Open Filled Draft Deleted On\ Hold Canceled]
 
       # Get a list of job summaries -- GET /jobs
-      def job_summaries(params)
-        query = {
+      def job_summaries(params = {} of String => String)
+        options = Halite::Options.new(params: {
           "statusGroups" => "ALL",     # JOB_STATUS_GROUPS
-          "sortBy" =>       "created", # "count", "title", "lead", "created", "status"
-          "sortOrder" =>    "ASC"      # "ASC", "DESC"
-        }
-        query.merge!(params) if params
-        options = Halite::Options.new(params: query)
+          "sortBy"       => "created", # "count", "title", "lead", "created", "status"
+          "sortOrder"    => "ASC",     # "ASC", "DESC"
+        }.merge(params))
 
         request("GET", "applicant_tracking/jobs", options: options)
       end
 
       # Get a list of applications, following pagination -- GET /applications
-      def applications(params)
+      def applications(params = {} of String => String)
         page_limit = params.delete("page_limit") { 1 }
 
         apps = [] of JSON::Any
 
         1.upto page_limit do |i|
-          response = request_applications(params.merge("page" => i))
+          response = request_applications(params.merge({"page" => i}))
 
           if response.json.try &.[]?("applications")
             apps << response.json["applications"]
@@ -41,42 +39,53 @@ module Bamboozled
 
       # Get the details of an application -- GET /applications/:id
       def application(applicant_id)
-        request(:get, "applicant_tracking/applications/#{applicant_id}")
+        request("GET", "applicant_tracking/applications/#{applicant_id}")
       end
 
       # Add comments to an application -- POST /applications/:id/comments
       def add_comment(applicant_id, comment)
-        details = { type: "comment", comment: comment }.to_json
-        options = { body: details, headers: { "Content-Type" => "application/json" } }
+        options = Halite::Options.new(
+          json: {
+            "type"    => "comment",
+            "comment" => comment,
+          },
+          headers: {
+            "Content-Type" => "application/json",
+          }
+        )
 
-        request(:post, "applicant_tracking/applications/#{applicant_id}/comments", options)
+        request("POST", "applicant_tracking/applications/#{applicant_id}/comments", options: options)
       end
 
       # Get a list of statuses for a company -- GET /statuses
       def statuses
-        request(:get, "applicant_tracking/statuses")
+        request("GET", "applicant_tracking/statuses")
       end
 
       # Change applicant's status -- POST /applications/:id/status
       def change_status(applicant_id, status_id)
-        details = { status: status_id.to_i }.to_json
-        options = { body: details, headers: { "Content-Type" => "application/json" } }
+        options = Halite::Options.new(
+          json: {
+            "status" => status_id.to_i,
+          },
+          headers: {
+            "Content-Type" => "application/json",
+          }
+        )
 
-        request(:post, "applicant_tracking/applications/#{applicant_id}/status", options)
+        request("POST", "applicant_tracking/applications/#{applicant_id}/status", options: options)
       end
 
-      protected
-
-      def request_applications(params = {}) # rubocop:disable Style/OptionHash
+      protected def request_applications(params = {} of String => String)
         # Also supported:
         # page, jobId, applicationStatusId, applicationStatus (APPLICATION_STATUS_GROUPS),
         # jobStatusGroups (JOB_STATUS_GROUPS), searchString
-        query = {
-          "sortBy":    "created_date", # "first_name", "job_title", "rating", "phone", "status", "last_updated", "created_date"
-          "sortOrder": "ASC"           # "ASC", "DESC"
-        }.merge(params)
+        options = Halite::Options.new(params: {
+          "sortBy"    => "created_date", # "first_name", "job_title", "rating", "phone", "status", "last_updated", "created_date"
+          "sortOrder" => "ASC",          # "ASC", "DESC"
+        }.merge(params))
 
-        request(:get, "applicant_tracking/applications", query: query)
+        request("GET", "applicant_tracking/applications", options: options)
       end
     end
   end
