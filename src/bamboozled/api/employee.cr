@@ -80,6 +80,14 @@ module Bamboozled
         options = {body: details}
 
         request(:post, "employees/", options)
+
+        options = Halite::Options.new(
+          json: {
+            "type"    => "comment",
+            "comment" => comment,
+          }
+        )
+        request("POST", "employees")
       end
 
       # TODO

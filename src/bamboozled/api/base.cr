@@ -1,81 +1,76 @@
 module Bamboozled
   module API
-    record Response,
-      headers : HTTP::Headers,
-      json : JSON::Any? = nil,
-      xml : XML::Node? = nil
+    record Response, headers : HTTP::Headers, json : JSON::Any? = nil
+
+    enum HttpMethod
+      Get
+      Post
+      Put
+      Delete
+
+      def name
+        case self
+        when .get?
+          "GET"
+        when .post?
+          "POST"
+        when .put?
+          "PUT"
+        when .delete?
+          "DELETE"
+        end
+      end
+    end
 
     class Base
       property subdomain : String
       property api_key : String
-      property http_options = Halite::Options.new
+      property api_version = "v1"
 
-      def initialize(@subdomain, @api_key, @http_options)
+      def initialize(@subdomain, @api_key, @api_version)
       end
 
-      protected def request(method, path, options = nil)
-        request(method, path) do |opts|
-          opts.merge!(options) if options
-        end
-      end
+      protected def request(
+        http_method : HttpMethod,
+        http_path : String,
+        query_params : String? = nil,
+        headers : HTTP::Headers? = nil,
+        body : HTTP::Client::BodyType = nil
+      )
+        client = generate_client(query_params)
+        client_response = client.exec(http_method.name, http_path, headers, body)
+        response = Response.new(headers: client_response.headers)
 
-      protected def request(method, path)
-        client = Halite::Client.new
-
-        client.endpoint(path_prefix)
-        client.basic_auth(auth)
-        client.user_agent("Bamboozled/#{Bamboozled::VERSION}")
-        client.headers(accept: "application/json", content_type: "text/plain")
-
-        options = Halite::Options.new
-        yield options
-
-        response = client.request(method, path, http_options.merge(options))
-
-        case response.status_code
-        when 200..201
-          res = Response.new(headers: response.headers)
-
+        case client_response
+        when .success?
           begin
-            if response.to_s
-              res = res.copy_with(json: response.parse("json"))
-              res = res.copy_with(xml: XML.parse(response.to_s))
-            end
+            response = response.copy_with(json: JSON.parse(client_response.body))
           rescue
           end
-
-          res
-        when 400
-          raise Bamboozled::BadRequest.new
-        when 401
-          raise Bamboozled::AuthenticationFailed.new
-        when 403
-          raise Bamboozled::Forbidden.new
-        when 404
-          raise Bamboozled::NotFound.new
-        when 406
-          raise Bamboozled::NotAcceptable.new
-        when 409
-          raise Bamboozled::Conflict.new
-        when 429
-          raise Bamboozled::LimitExceeded.new
-        when 500
-          raise Bamboozled::InternalServerError.new
-        when 502
-          raise Bamboozled::GatewayError.new
-        when 503
-          raise Bamboozled::ServiceUnavailable.new
-        else
-          raise Bamboozled::InformBamboo.new
+        when .client_error?
+          raise ClientError.new(client_response)
+        when .server_error?
+          raise ServerError.new(client_response)
         end
+
+        response
       end
 
-      private def auth
-        {user: api_key, pass: "x"}
-      end
+      private def generate_client(query_params = nil)
+        endpoint = "https://api.bamboohr.com/api/gateway.php/#{subdomain}/#{api_version}/"
+        uri = URI.parse(endpoint)
+        client = HTTP::Client.new(uri)
 
-      private def path_prefix
-        "https://api.bamboohr.com/api/gateway.php/#{subdomain}/v1/"
+        client.basic_auth(api_key, "x")
+        client.before_request do |request|
+          request.headers["User-Agent"] = "Bamboozled/#{Bamboozled::VERSION}"
+          request.headers["Accept"] = "application/json"
+          request.headers["Content-Type"] = "application/json"
+
+          request.query = query_params if query_params
+        end
+
+        client
       end
     end
   end
