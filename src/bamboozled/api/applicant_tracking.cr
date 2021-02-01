@@ -4,42 +4,46 @@ module Bamboozled
   module API
     class ApplicantTracking < Base
       APPLICATION_STATUS_GROUPS = %w[ALL ALL_ACTIVE NEW ACTIVE INACTIVE HIRED]
-
-      JOB_STATUS_GROUPS = %w[ALL DRAFT_AND_OPEN Open Filled Draft Deleted On\ Hold Canceled]
+      JOB_STATUS_GROUPS         = %w[ALL DRAFT_AND_OPEN Open Filled Draft Deleted On\ Hold Canceled]
 
       # Get a list of job summaries -- GET /jobs
-      def job_summaries(params = {} of String => String | Array(String))
-        query_params = HTTP::Params.encode({
+      def job_summaries(filters = nil)
+        params = {
           "statusGroups" => "ALL",     # JOB_STATUS_GROUPS
           "sortBy"       => "created", # "count", "title", "lead", "created", "status"
           "sortOrder"    => "ASC",     # "ASC", "DESC"
-        }.merge!(params))
+        }
+        params.merge!(filters) if filters
+        query_params = HTTP::Params.encode(params)
 
         request(HttpMethod::Get, "applicant_tracking/jobs", query_params: query_params)
       end
 
       # Get a list of applications, following pagination -- GET /applications
-      def applications(params = {} of String => String | Array(String))
-        page_limit = params.delete("page_limit") { 1 }
-
+      def applications(filters = nil, page_limit = 1)
         apps = [] of JSON::Any
 
         1.upto page_limit do |i|
           # Also supported:
           # page, jobId, applicationStatusId, applicationStatus (APPLICATION_STATUS_GROUPS),
           # jobStatusGroups (JOB_STATUS_GROUPS), searchString
-          query_params = HTTP::Params.encode({
+          params = {
+            "page"      => i,
             "sortBy"    => "created_date", # "first_name", "job_title", "rating", "phone", "status", "last_updated", "created_date"
             "sortOrder" => "ASC",          # "ASC", "DESC"
-          }.merge!(params.merge!({"page" => i})))
+          }
+          params.merge!(filters) if filters
+          query_params = HTTP::Params.encode(params)
 
           response = request(HttpMethod::Get, "applicant_tracking/applications", query_params: query_params)
 
-          if response.json.try &.[]?("applications")
-            apps << response.json["applications"]
+          if response.json["applications"]?
+            response.json["applications"].as_a.each do |app|
+              apps << app
+            end
           end
 
-          break if response.json.try &.[]?("paginationComplete")
+          break if response.json["paginationComplete"]?.try(&.as_bool)
         end
 
         apps

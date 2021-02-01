@@ -1,33 +1,13 @@
 module Bamboozled
   module API
-    record Response, headers : HTTP::Headers, json : JSON::Any? = nil
-
-    enum HttpMethod
-      Get
-      Post
-      Put
-      Delete
-
-      def name
-        case self
-        when .get?
-          "GET"
-        when .post?
-          "POST"
-        when .put?
-          "PUT"
-        when .delete?
-          "DELETE"
-        end
-      end
-    end
-
     class Base
+      include Bamboozled::Mixins
+
       property subdomain : String
       property api_key : String
-      property api_version = "v1"
+      property api_version : String
 
-      def initialize(@subdomain, @api_key, @api_version)
+      def initialize(@subdomain, @api_key, @api_version = "v1")
       end
 
       protected def request(
@@ -57,8 +37,7 @@ module Bamboozled
       end
 
       private def generate_client(query_params = nil)
-        endpoint = "https://api.bamboohr.com/api/gateway.php/#{subdomain}/#{api_version}/"
-        uri = URI.parse(endpoint)
+        uri = URI.parse("https://api.bamboohr.com/api/gateway.php/#{subdomain}/#{api_version}/")
         client = HTTP::Client.new(uri)
 
         client.basic_auth(api_key, "x")
