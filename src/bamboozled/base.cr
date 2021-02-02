@@ -4,7 +4,7 @@ module Bamboozled
     property api_key : String
     property api_version : String?
 
-    def initialize(@subdomain, @api_key, @api_version)
+    def initialize(@subdomain, @api_key, @api_version = nil)
     end
 
     # {% for feature in %w[employee report meta time_off time_tracking applicant_tracking] %}

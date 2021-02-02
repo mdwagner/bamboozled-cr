@@ -11,11 +11,6 @@ crystal: 0.35.1
 
 license: MIT
 
-dependencies:
-  halite:
-    github: icyleaf/halite
-    version: 0.10.8
-
 development_dependencies:
   webmock:
     github: manastech/webmock.cr

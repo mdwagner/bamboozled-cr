@@ -9,7 +9,8 @@ require "./bamboozled/errors"
 require "./bamboozled/mixins"
 require "./bamboozled/api/base"
 require "./bamboozled/api/field_collection"
-require "./bamboozled/**"
+require "./bamboozled/api/*"
+require "./bamboozled/base"
 
 module Bamboozled
   # Creates a standard client that will raise all errors it encounters

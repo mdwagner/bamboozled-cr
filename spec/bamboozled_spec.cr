@@ -1,9 +1,7 @@
 require "./spec_helper"
 
 describe Bamboozled do
-  # TODO: Write tests
-
-  it "works" do
-    false.should eq(true)
+  it "compiles" do
+    Bamboozled.client("subdomain", "api-key")
   end
 end
