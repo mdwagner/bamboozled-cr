@@ -2,6 +2,7 @@ module Bamboozled
   # https://documentation.bamboohr.com/docs/api-details#standard-http-responses
   private class HttpErrorBase < Exception
     @@error_types = {} of Int32 => String
+    @@default_error = "An error occurred that we do not now how to handle. Please contact BambooHR."
 
     property response : HTTP::Client::Response
 
@@ -9,8 +10,12 @@ module Bamboozled
       @@error_types[code] = hint
     end
 
+    def self.default_error_message(message)
+      @@default_error = message
+    end
+
     def initialize(@response)
-      message = @@error_types[@response.status_code]? || unknown_error_message
+      message = @@error_types[@response.status_code]? || @@default_error
       super(message)
     end
 

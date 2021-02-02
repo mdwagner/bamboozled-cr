@@ -5,9 +5,9 @@ module Bamboozled
 
       property subdomain : String
       property api_key : String
-      property api_version : String
+      property api_version = "v1"
 
-      def initialize(@subdomain, @api_key, @api_version = "v1")
+      def initialize(@subdomain, @api_key, @api_version)
       end
 
       protected def request(

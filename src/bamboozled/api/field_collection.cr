@@ -1,9 +1,9 @@
 module Bamboozled
   module API
     class FieldCollection
-      property! fields = [] of String
+      property! fields : Array(String)
 
-      def initialize(@fields)
+      def initialize(@fields = [] of String)
       end
 
       def self.wrap(fields = nil)
