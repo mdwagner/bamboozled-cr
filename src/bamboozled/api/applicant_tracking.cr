@@ -7,20 +7,20 @@ module Bamboozled
       JOB_STATUS_GROUPS         = %w[ALL DRAFT_AND_OPEN Open Filled Draft Deleted On\ Hold Canceled]
 
       # Get a list of job summaries -- GET /jobs
-      def job_summaries(filters = nil)
+      def job_summaries(param_filters = nil)
         params = {
           "statusGroups" => "ALL",     # JOB_STATUS_GROUPS
           "sortBy"       => "created", # "count", "title", "lead", "created", "status"
           "sortOrder"    => "ASC",     # "ASC", "DESC"
         }
-        params.merge!(filters) if filters
+        params.merge!(param_filters) if param_filters
         query_params = HTTP::Params.encode(params)
 
         request(HttpMethod::Get, "applicant_tracking/jobs", query_params: query_params)
       end
 
       # Get a list of applications, following pagination -- GET /applications
-      def applications(filters = nil, page_limit = 1)
+      def applications(param_filters = nil, page_limit = 1)
         apps = [] of JSON::Any
 
         1.upto page_limit do |i|
@@ -32,7 +32,7 @@ module Bamboozled
             "sortBy"    => "created_date", # "first_name", "job_title", "rating", "phone", "status", "last_updated", "created_date"
             "sortOrder" => "ASC",          # "ASC", "DESC"
           }
-          params.merge!(filters) if filters
+          params.merge!(param_filters) if param_filters
           query_params = HTTP::Params.encode(params)
 
           response = request(HttpMethod::Get, "applicant_tracking/applications", query_params: query_params)
