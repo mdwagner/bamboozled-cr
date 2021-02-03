@@ -7,8 +7,7 @@ module Bamboozled
     def initialize(@subdomain, @api_key, @api_version = nil)
     end
 
-    # {% for feature in %w[employee report meta time_off time_tracking applicant_tracking] %}
-    {% for feature in %w[employee report meta applicant_tracking] %}
+    {% for feature in %w[employee report meta time_off time_tracking applicant_tracking] %}
     @{{feature.id}} : Bamboozled::API::{{feature.camelcase.id}}?
 
     def {{feature.id}}

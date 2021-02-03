@@ -30,9 +30,9 @@ module Bamboozled
       end
       {% end %}
 
-      def time_off_estimate(employee_id, end_date)
+      def time_off_estimate(employee_id, end_date : Time)
         query_params = HTTP::Params.encode({
-          "end" => !end_date.is_a?(String) ? end_date.to_s("%F") : end_date,
+          "end" => end_date.to_s("%F"),
         })
 
         request(HttpMethod::Get, "employees/#{employee_id}/time_off/calculations", query_params: query_params)
