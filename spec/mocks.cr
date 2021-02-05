@@ -10,6 +10,14 @@ module MockClient
   end
 end
 
+module SetupFixture
+  macro included
+    let(response) { File.new(fixture) }
+    before_each { WebMock.stub(:any, /.*api\.bamboohr\.com/).to_return(response) }
+    after_each { response.close }
+  end
+end
+
 module Mocks
   macro included
     include SetupWebMock

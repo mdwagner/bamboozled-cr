@@ -3,14 +3,25 @@ require "../../spec_helper.cr"
 Spectator.describe Bamboozled::API::ApplicantTracking do
   include Mocks
 
-  it "gets job summaries" do
-    File.open("spec/fixtures/job_summaries.json") do |response|
-      WebMock.stub(:any, /.*api\.bamboohr\.com/).to_return(response)
+  context "#job_summaries" do
+    include SetupFixture
+    subject(fixture) { "spec/fixtures/job_summaries.json" }
+    subject { client.applicant_tracking.job_summaries.json }
 
-      jobs = client.applicant_tracking.job_summaries.json
+    it "gets job summaries" do
+      is_expected.to_not be_nil
+      expect(subject.not_nil!.size).to eq(5)
+    end
+  end
 
-      expect(jobs).to_not be_nil
-      expect(jobs.not_nil!.size).to eq(5)
+  context "#applicant_statuses" do
+    include SetupFixture
+    subject(fixture) { "spec/fixtures/applicant_statuses.json" }
+    subject { client.applicant_tracking.statuses.json }
+
+    it "gets applicant statuses" do
+      is_expected.to_not be_nil
+      expect(subject.not_nil!.size).to eq(19)
     end
   end
 end
