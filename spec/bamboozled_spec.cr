@@ -1,7 +1,9 @@
 require "./spec_helper"
 
-describe Bamboozled do
+Spectator.describe Bamboozled do
+  subject { described_class.client("x", "x") }
+
   it "compiles" do
-    Bamboozled.client("subdomain", "api-key")
+    is_expected.to be_a(Bamboozled::Base)
   end
 end

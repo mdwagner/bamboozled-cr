@@ -7,7 +7,7 @@ module Bamboozled
       property api_key : String
       property api_version = "v1"
 
-      def initialize(@subdomain, @api_key, @api_version)
+      def initialize(@subdomain, @api_key)
       end
 
       protected def request(
@@ -21,7 +21,7 @@ module Bamboozled
         client_response = client.exec(http_method.name, http_path, headers, body)
         response = Response.new(headers: client_response.headers)
 
-        case client_response
+        case client_response.status
         when .success?
           begin
             response = response.copy_with(json: JSON.parse(client_response.body))

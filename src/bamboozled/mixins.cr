@@ -18,7 +18,7 @@ module Bamboozled
           "PUT"
         when .delete?
           "DELETE"
-        end
+        end.not_nil!
       end
     end
   end
