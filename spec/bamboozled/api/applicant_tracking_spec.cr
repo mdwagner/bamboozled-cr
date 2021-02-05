@@ -4,8 +4,7 @@ Spectator.describe Bamboozled::API::ApplicantTracking do
   include Mocks
 
   context "#job_summaries" do
-    include SetupFixture
-    subject(fixture) { "spec/fixtures/job_summaries.json" }
+    fixture "spec/fixtures/job_summaries.json"
     subject { client.applicant_tracking.job_summaries.json }
 
     it "gets job summaries" do
@@ -15,8 +14,7 @@ Spectator.describe Bamboozled::API::ApplicantTracking do
   end
 
   context "#applicant_statuses" do
-    include SetupFixture
-    subject(fixture) { "spec/fixtures/applicant_statuses.json" }
+    fixture "spec/fixtures/applicant_statuses.json"
     subject { client.applicant_tracking.statuses.json }
 
     it "gets applicant statuses" do
