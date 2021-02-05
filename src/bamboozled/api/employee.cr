@@ -25,9 +25,9 @@ module Bamboozled
 
       # Tabular data
       {% for action in %w[job_info employment_status compensation dependents contacts] %}
-      def {{action.id}}(id)
-        request(HttpMethod::Get, "employees/#{id}/tables/{{ action.camelcase(lower: true).id }}")
-      end
+        def {{action.id}}(id)
+          request(HttpMethod::Get, "employees/#{id}/tables/{{ action.camelcase(lower: true).id }}")
+        end
       {% end %}
 
       def time_off_estimate(employee_id, end_date : Time)

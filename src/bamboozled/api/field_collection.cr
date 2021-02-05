@@ -92,16 +92,6 @@ module Bamboozled
       def to_csv
         fields.join(",")
       end
-
-      def to_xml
-        String.build do |s|
-          XML.build_fragment(s) do |xml|
-            xml.element("fields") do
-              fields.map { |field| xml.element("field", id: field) }
-            end
-          end
-        end
-      end
     end
   end
 end
