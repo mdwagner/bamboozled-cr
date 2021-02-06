@@ -28,7 +28,7 @@ module Bamboozled
           # page, jobId, applicationStatusId, applicationStatus (APPLICATION_STATUS_GROUPS),
           # jobStatusGroups (JOB_STATUS_GROUPS), searchString
           params = {
-            "page"      => i,
+            "page"      => "#{i}",
             "sortBy"    => "created_date", # "first_name", "job_title", "rating", "phone", "status", "last_updated", "created_date"
             "sortOrder" => "ASC",          # "ASC", "DESC"
           }
@@ -37,13 +37,17 @@ module Bamboozled
 
           response = request(HttpMethod::Get, "applicant_tracking/applications", query_params: query_params)
 
-          if response.json["applications"]?
-            response.json["applications"].as_a.each do |app|
-              apps << app
-            end
-          end
+          unless response.json.nil?
+            json = response.json.not_nil!
 
-          break if response.json["paginationComplete"]?.try(&.as_bool)
+            if json["applications"]?
+              json["applications"].as_a.each do |app|
+                apps << app
+              end
+            end
+
+            break if json["paginationComplete"]?.try(&.as_bool)
+          end
         end
 
         apps
