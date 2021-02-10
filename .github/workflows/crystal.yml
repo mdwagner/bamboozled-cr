@@ -1,0 +1,33 @@
+name: Crystal CI
+
+on: push
+
+jobs:
+  test:
+    name: Specs
+    runs-on: ubuntu-latest
+
+    container:
+      image: crystallang/crystal:0.35.1-alpine
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache shards
+        uses: actions/cache@v1
+        with:
+          path: lib
+          key: ${{ runner.os }}-shards-${{ hashFiles('**/shard.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-shards-
+
+      - name: Install dependencies
+        run: shards install
+
+      - name: Run specs
+        run: crystal spec
+
+      - name: Check file formatting
+        run: crystal tool format --check src spec
+        if: always()
