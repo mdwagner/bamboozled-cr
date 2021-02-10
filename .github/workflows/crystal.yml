@@ -14,14 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Cache shards
-        uses: actions/cache@v1
-        with:
-          path: lib
-          key: ${{ runner.os }}-shards-${{ hashFiles('**/shard.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-shards-
-
       - name: Install dependencies
         run: shards install
 
