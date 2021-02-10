@@ -3,7 +3,7 @@ module Bamboozled
     class Meta < Base
       def users
         response = request(HttpMethod::Get, "meta/users")
-        response.json.as_h.values
+        response.json.try(&.as_h.values) || [] of JSON::Any
       end
 
       def fields
@@ -16,7 +16,7 @@ module Bamboozled
 
       def tables
         response = request(HttpMethod::Get, "meta/tables")
-        response.json.as_a.first
+        response.json.try { |x| x["table"].as_a } || [] of JSON::Any
       end
     end
   end
