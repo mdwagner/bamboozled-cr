@@ -16,9 +16,13 @@ module Mocks
     include MockClient
   end
 
-  macro fixture(path)
+  macro fixture(path, status = 200, headers = nil)
     let(response) { File.new({{path.stringify.id}}) }
-    before_each { WebMock.stub(:any, /.*api\.bamboohr\.com/).to_return(response) }
+    before_each {
+      WebMock.stub(:any, /.*api\.bamboohr\.com/).to_return(
+        body_io: response, status: {{status}}, headers: {{headers}}
+      )
+    }
     after_each { response.close }
   end
 end
