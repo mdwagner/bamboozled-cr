@@ -1,8 +1,23 @@
 module Bamboozled
   module API
     class Employee < Base
-      def all
-        request(HttpMethod::Get, "employees/directory")
+      def all(fields = [] of String)
+        employees = [] of JSON::Any
+
+        response = request(HttpMethod::Get, "employees/directory")
+
+        response.json.try do |json|
+          employees = json["employees"].as_a
+
+          unless fields.empty?
+            employees = employees.map do |employee|
+              fields << "id"
+              JSON::Any.new employee.as_h.select(fields)
+            end
+          end
+        end
+
+        employees
       end
 
       def find(employee_id, fields = nil)
