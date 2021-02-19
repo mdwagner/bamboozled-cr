@@ -1,0 +1,31 @@
+name: Crystal Docs
+
+on:
+  workflow_run:
+    workflows: ["Crystal CI"]
+    branches: [master]
+    types: [completed]
+
+jobs:
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+
+    container:
+      image: crystallang/crystal:0.35.1-alpine
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: shards install
+
+      - name: Generate docs
+        run: crystal docs
+
+      - name: Deploy docs to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.0.0
+        with:
+          branch: gh-pages
+          folder: docs
