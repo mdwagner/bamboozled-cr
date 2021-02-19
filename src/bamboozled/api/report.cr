@@ -11,12 +11,13 @@ module Bamboozled
         request(HttpMethod::Get, "reports/#{id}", query_params: query_params)
       end
 
+      # https://documentation.bamboohr.com/docs/list-of-field-names
       def custom(fields)
         query_params = HTTP::Params.encode({
           "format" => "JSON",
         })
         body = {
-          "fields" => FieldCollection.wrap(fields).fields,
+          "fields" => fields.join(","),
         }.to_json
 
         request(HttpMethod::Post, "reports/custom", query_params: query_params, body: body)

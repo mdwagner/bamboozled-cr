@@ -7,7 +7,6 @@ require "./bamboozled/version"
 require "./bamboozled/errors"
 require "./bamboozled/mixins"
 require "./bamboozled/api/base"
-require "./bamboozled/api/field_collection"
 require "./bamboozled/api/*"
 require "./bamboozled/base"
 

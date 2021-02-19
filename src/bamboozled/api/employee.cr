@@ -1,6 +1,7 @@
 module Bamboozled
   module API
     class Employee < Base
+      # https://documentation.bamboohr.com/docs/list-of-field-names
       def all(fields = [] of String)
         employees = [] of JSON::Any
 
@@ -20,9 +21,10 @@ module Bamboozled
         employees
       end
 
-      def find(employee_id, fields = nil)
+      # https://documentation.bamboohr.com/docs/list-of-field-names
+      def find(employee_id, fields = %w[firstName lastName])
         query_params = HTTP::Params.encode({
-          "fields" => FieldCollection.wrap(fields).to_csv,
+          "fields" => fields.join(","),
         })
 
         request(HttpMethod::Get, "employees/#{employee_id}", query_params: query_params)
