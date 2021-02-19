@@ -18,6 +18,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Install rsync
+        run: apk --no-cache add rsync
+
       - name: Install dependencies
         run: shards install
 
