@@ -1,6 +1,8 @@
-# bamboozled
+# Introduction
 
-TODO: Write a description here
+Bamboozled-cr is a Crystal port of the Ruby wrapper [Bamboozled](https://github.com/Skookum/bamboozled).
+
+Both are an HTTP Client library for the [BambooHR API](https://documentation.bamboohr.com/docs).
 
 ## Installation
 
@@ -8,8 +10,8 @@ TODO: Write a description here
 
    ```yaml
    dependencies:
-     bamboozled:
-       github: your-github-user/bamboozled-cr
+     bamboozled-cr:
+       github: mdwagner/bamboozled-cr
    ```
 
 2. Run `shards install`
@@ -17,18 +19,14 @@ TODO: Write a description here
 ## Usage
 
 ```crystal
-require "bamboozled"
+require "bamboozled-cr"
 ```
 
-TODO: Write usage instructions here
-
-## Development
-
-TODO: Write development instructions here
+Please checkout the `spec/bamboozled/api` directory for examples.
 
 ## Contributing
 
-1. Fork it (<https://github.com/your-github-user/bamboozled-cr/fork>)
+1. Fork it (<https://github.com/mdwagner/bamboozled-cr/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -36,4 +34,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [your-name-here](https://github.com/your-github-user) - creator and maintainer
+- [Michael Wagner](https://github.com/mdwagner) - creator and maintainer
