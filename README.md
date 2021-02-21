@@ -24,11 +24,16 @@ require "bamboozled"
 client = Bamboozled.client("my-subdomain", "my-api-key")
 
 client.employee.photo_url("email@example.com")
+# => http://my-subdomain.bamboohr.com/employees/photos?h=ba9bb45673e99e6fad7251bf8ea40f89
 ```
 
 Please checkout the `spec/bamboozled/api` directory for more examples.
 
 Also, checkout the [Ruby wrapper usage](https://github.com/Skookum/bamboozled#usage) as well.
+
+## Documentation
+
+Every push to `master` deploys the latest documentation to [GitHub Pages](https://mdwagner.github.io/bamboozled-cr/)
 
 ## Contributing
 
