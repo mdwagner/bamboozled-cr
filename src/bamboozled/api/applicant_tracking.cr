@@ -16,7 +16,7 @@ module Bamboozled
         params.merge!(param_filters) if param_filters
         query_params = HTTP::Params.encode(params)
 
-        request(HttpMethod::Get, "applicant_tracking/jobs", query_params: query_params)
+        request(:get, "applicant_tracking/jobs", query_params: query_params)
       end
 
       # Get a list of applications, following pagination -- GET /applications
@@ -35,7 +35,7 @@ module Bamboozled
           params.merge!(param_filters) if param_filters
           query_params = HTTP::Params.encode(params)
 
-          response = request(HttpMethod::Get, "applicant_tracking/applications", query_params: query_params)
+          response = request(:get, "applicant_tracking/applications", query_params: query_params)
 
           unless response.json.nil?
             json = response.json.not_nil!
@@ -55,7 +55,7 @@ module Bamboozled
 
       # Get the details of an application -- GET /applications/:id
       def application(applicant_id)
-        request(HttpMethod::Get, "applicant_tracking/applications/#{applicant_id}")
+        request(:get, "applicant_tracking/applications/#{applicant_id}")
       end
 
       # Add comments to an application -- POST /applications/:id/comments
@@ -65,12 +65,12 @@ module Bamboozled
           "comment" => comment,
         }.to_json
 
-        request(HttpMethod::Post, "applicant_tracking/applications/#{applicant_id}/comments", body: body)
+        request(:post, "applicant_tracking/applications/#{applicant_id}/comments", body: body)
       end
 
       # Get a list of statuses for a company -- GET /statuses
       def statuses
-        request(HttpMethod::Get, "applicant_tracking/statuses")
+        request(:get, "applicant_tracking/statuses")
       end
 
       # Change applicant's status -- POST /applications/:id/status
@@ -79,7 +79,7 @@ module Bamboozled
           "status" => status_id.to_i,
         }.to_json
 
-        request(HttpMethod::Post, "applicant_tracking/applications/#{applicant_id}/status", body: body)
+        request(:post, "applicant_tracking/applications/#{applicant_id}/status", body: body)
       end
     end
   end

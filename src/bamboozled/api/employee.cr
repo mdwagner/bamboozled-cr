@@ -5,7 +5,7 @@ module Bamboozled
       def all(fields = [] of String)
         employees = [] of JSON::Any
 
-        response = request(HttpMethod::Get, "employees/directory")
+        response = request(:get, "employees/directory")
 
         response.json.try do |json|
           employees = json["employees"].as_a
@@ -27,7 +27,7 @@ module Bamboozled
           "fields" => fields.join(","),
         })
 
-        request(HttpMethod::Get, "employees/#{employee_id}", query_params: query_params)
+        request(:get, "employees/#{employee_id}", query_params: query_params)
       end
 
       def last_changed(time, type = nil)
@@ -37,13 +37,13 @@ module Bamboozled
         params["type"] = type if type
         query_params = HTTP::Params.encode(params)
 
-        request(HttpMethod::Get, "employees/changed", query_params: query_params)
+        request(:get, "employees/changed", query_params: query_params)
       end
 
       # Tabular data
       {% for action in %w[job_info employment_status compensation dependents contacts] %}
         def {{action.id}}(id)
-          request(HttpMethod::Get, "employees/#{id}/tables/{{ action.camelcase(lower: true).id }}")
+          request(:get, "employees/#{id}/tables/{{ action.camelcase(lower: true).id }}")
         end
       {% end %}
 
@@ -52,19 +52,19 @@ module Bamboozled
           "end" => end_date.to_s("%F"),
         })
 
-        request(HttpMethod::Get, "employees/#{employee_id}/time_off/calculations", query_params: query_params)
+        request(:get, "employees/#{employee_id}/time_off/calculations", query_params: query_params)
       end
 
       def photo_binary(employee_id, size = "small")
-        request(HttpMethod::Get, "employees/#{employee_id}/photo/#{size}")
+        request(:get, "employees/#{employee_id}/photo/#{size}")
       end
 
       def add(employee_details)
-        request(HttpMethod::Post, "employees", body: employee_details.to_json)
+        request(:post, "employees", body: employee_details.to_json)
       end
 
       def update(bamboo_id, employee_details)
-        request(HttpMethod::Post, "employees#{bamboo_id}", body: employee_details.to_json)
+        request(:post, "employees#{bamboo_id}", body: employee_details.to_json)
       end
 
       def photo_url(email, tls = false)

@@ -8,7 +8,7 @@ module Bamboozled
         params["fd"] = "no" if disable_dup_filtering
         query_params = HTTP::Params.encode(params)
 
-        request(HttpMethod::Get, "reports/#{id}", query_params: query_params)
+        request(:get, "reports/#{id}", query_params: query_params)
       end
 
       # https://documentation.bamboohr.com/docs/list-of-field-names
@@ -20,7 +20,7 @@ module Bamboozled
           "fields" => fields.join(","),
         }.to_json
 
-        request(HttpMethod::Post, "reports/custom", query_params: query_params, body: body)
+        request(:post, "reports/custom", query_params: query_params, body: body)
       end
     end
   end

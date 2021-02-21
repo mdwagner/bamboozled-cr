@@ -22,7 +22,7 @@ module Bamboozled
 
         query_params = HTTP::Params.encode(params)
 
-        request(HttpMethod::Get, "time_off/requests", query_params: query_params)
+        request(:get, "time_off/requests", query_params: query_params)
       end
 
       def whos_out(start_date : Time? = nil, end_date : Time? = nil)
@@ -32,7 +32,7 @@ module Bamboozled
 
         query_params = HTTP::Params.encode(params)
 
-        request(HttpMethod::Get, "time_off/whos_out", query_params: query_params)
+        request(:get, "time_off/whos_out", query_params: query_params)
       end
 
       private def valid_end_date?(start_date : Time?, end_date : Time?)
