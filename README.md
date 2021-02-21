@@ -10,7 +10,7 @@ Both are an HTTP Client library for the [BambooHR API](https://documentation.bam
 
    ```yaml
    dependencies:
-     bamboozled-cr:
+     bamboozled:
        github: mdwagner/bamboozled-cr
    ```
 
@@ -19,10 +19,16 @@ Both are an HTTP Client library for the [BambooHR API](https://documentation.bam
 ## Usage
 
 ```crystal
-require "bamboozled-cr"
+require "bamboozled"
+
+client = Bamboozled.client("my-subdomain", "my-api-key")
+
+client.employee.photo_url("email@example.com")
 ```
 
-Please checkout the `spec/bamboozled/api` directory for examples.
+Please checkout the `spec/bamboozled/api` directory for more examples.
+
+Also, checkout the [Ruby wrapper usage](https://github.com/Skookum/bamboozled#usage) as well.
 
 ## Contributing
 
