@@ -25,10 +25,11 @@ Spectator.describe Bamboozled::API::ApplicantTracking do
 
   context "#applications" do
     fixture "spec/fixtures/applications.json"
-    subject { client.applicant_tracking.applications(page_limit: 10) }
+    subject { client.applicant_tracking.applications(page_limit: 10).json }
 
     it "gets a list of applications" do
-      expect(subject.size).to eq(13)
+      is_expected.to_not be_nil
+      expect(subject.not_nil!.size).to eq(13)
     end
   end
 

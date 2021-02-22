@@ -18,7 +18,7 @@ module Bamboozled
           end
         end
 
-        employees
+        response.copy_with(json: JSON::Any.new(employees))
       end
 
       # https://documentation.bamboohr.com/docs/list-of-field-names

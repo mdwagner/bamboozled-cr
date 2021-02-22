@@ -22,6 +22,7 @@ module Bamboozled
       # Get a list of applications, following pagination -- GET /applications
       def applications(param_filters = nil, page_limit = 1)
         apps = [] of JSON::Any
+        response = Response.new(headers: HTTP::Headers.new)
 
         1.upto page_limit do |i|
           # Also supported:
@@ -35,7 +36,8 @@ module Bamboozled
           params.merge!(param_filters) if param_filters
           query_params = HTTP::Params.encode(params)
 
-          response = request(:get, "applicant_tracking/applications", query_params: query_params)
+          res = request(:get, "applicant_tracking/applications", query_params: query_params)
+          response = response.copy_with(headers: res.headers, json: res.json)
 
           unless response.json.nil?
             json = response.json.not_nil!
@@ -50,7 +52,7 @@ module Bamboozled
           end
         end
 
-        apps
+        response.copy_with(json: JSON::Any.new(apps))
       end
 
       # Get the details of an application -- GET /applications/:id

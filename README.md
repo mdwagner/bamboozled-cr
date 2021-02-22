@@ -8,11 +8,11 @@ Both are an HTTP Client library for the [BambooHR API](https://documentation.bam
 
 1. Add the dependency to your `shard.yml`:
 
-   ```yaml
-   dependencies:
-     bamboozled:
-       github: mdwagner/bamboozled-cr
-   ```
+```yaml
+dependencies:
+  bamboozled:
+    github: mdwagner/bamboozled-cr
+```
 
 2. Run `shards install`
 

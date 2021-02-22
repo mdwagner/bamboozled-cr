@@ -5,22 +5,24 @@ Spectator.describe Bamboozled::API::Employee do
 
   context "#all" do
     fixture "spec/fixtures/all_employees.json"
-    subject { client.employee.all }
+    subject { client.employee.all.json }
 
     it "gets all employees" do
-      expect(subject.size).to eq(2)
+      is_expected.to_not be_nil
+      expect(subject.not_nil!.size).to eq(2)
 
-      subject.each do |json|
+      subject.not_nil!.as_a.each do |json|
         expect(json.as_h.keys.size).to eq(7)
       end
     end
 
-    let(all_with_fields) { client.employee.all(%w[firstName lastName]) }
+    let(all_with_fields) { client.employee.all(%w[firstName lastName]).json }
 
     it "gets all employees with specific fields" do
-      expect(all_with_fields.size).to eq(2)
+      expect(all_with_fields).to_not be_nil
+      expect(all_with_fields.not_nil!.size).to eq(2)
 
-      all_with_fields.each do |json|
+      all_with_fields.not_nil!.as_a.each do |json|
         expect(json.as_h.keys.size).to eq(3)
       end
     end

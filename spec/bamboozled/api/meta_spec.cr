@@ -5,10 +5,11 @@ Spectator.describe Bamboozled::API::Meta do
 
   context "#users" do
     fixture "spec/fixtures/meta_users.json"
-    subject { client.meta.users }
+    subject { client.meta.users.json }
 
     it "gets all users" do
-      expect(subject.size).to eq(139)
+      is_expected.to_not be_nil
+      expect(subject.not_nil!.size).to eq(139)
     end
   end
 
@@ -32,10 +33,11 @@ Spectator.describe Bamboozled::API::Meta do
 
   context "#tables" do
     fixture "spec/fixtures/meta_tables.json"
-    subject { client.meta.tables }
+    subject { client.meta.tables.json }
 
     it "gets the tables" do
-      expect(subject.size).to eq(13)
+      is_expected.to_not be_nil
+      expect(subject.not_nil!.size).to eq(13)
     end
   end
 end
