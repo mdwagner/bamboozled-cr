@@ -1,5 +1,5 @@
 name: bamboozled
-version: 0.1.0
+version: 0.2.0
 
 authors:
   - Michael Wagner <mdwranger@gmail.com>
@@ -7,14 +7,14 @@ authors:
 description: |
   A Crystal wrapper for the BambooHR API http://www.bamboohr.com/
 
-crystal: 0.35.1
+crystal: ">= 1.0.0, < 2.0.0"
 
 license: MIT
 
 development_dependencies:
   spectator:
     gitlab: arctic-fox/spectator
-    tag: v0.9.32
+    tag: v0.9.33
   webmock:
     github: manastech/webmock.cr
-    tag: v0.13.0
+    tag: v0.14.0
