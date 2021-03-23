@@ -23,7 +23,7 @@ module Bamboozled
 
       # https://documentation.bamboohr.com/docs/list-of-field-names
       def find(employee_id, fields = %w[firstName lastName])
-        query_params = HTTP::Params.encode({
+        query_params = URI::Params.encode({
           "fields" => fields.join(","),
         })
 
@@ -35,7 +35,7 @@ module Bamboozled
           "since" => time.to_s("%FT%T%:z"),
         }
         params["type"] = type if type
-        query_params = HTTP::Params.encode(params)
+        query_params = URI::Params.encode(params)
 
         request(:get, "employees/changed", query_params: query_params)
       end
@@ -48,7 +48,7 @@ module Bamboozled
       {% end %}
 
       def time_off_estimate(employee_id, end_date : Time)
-        query_params = HTTP::Params.encode({
+        query_params = URI::Params.encode({
           "end" => end_date.to_s("%F"),
         })
 
@@ -72,7 +72,7 @@ module Bamboozled
           scheme: "http",
           host: "#{subdomain}.bamboohr.com",
           path: "employees/photos",
-          query: HTTP::Params.encode({
+          query: URI::Params.encode({
             "h" => Digest::MD5.digest(email.strip.downcase).hexstring,
           })
         )

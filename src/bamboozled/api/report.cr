@@ -6,14 +6,14 @@ module Bamboozled
           "format" => "JSON",
         }
         params["fd"] = "no" if disable_dup_filtering
-        query_params = HTTP::Params.encode(params)
+        query_params = URI::Params.encode(params)
 
         request(:get, "reports/#{id}", query_params: query_params)
       end
 
       # https://documentation.bamboohr.com/docs/list-of-field-names
       def custom(fields)
-        query_params = HTTP::Params.encode({
+        query_params = URI::Params.encode({
           "format" => "JSON",
         })
         body = {

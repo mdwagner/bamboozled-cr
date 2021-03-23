@@ -20,7 +20,7 @@ module Bamboozled
         params["type"] = type.to_s if type
         params["status"] = status.try(&.to_s) || %w[approved denied superceded requested canceled]
 
-        query_params = HTTP::Params.encode(params)
+        query_params = URI::Params.encode(params)
 
         request(:get, "time_off/requests", query_params: query_params)
       end
@@ -30,7 +30,7 @@ module Bamboozled
         params["start"] = start_date.to_s("%F") if start_date
         params["end"] = end_date.to_s("%F") if valid_end_date?(start_date, end_date)
 
-        query_params = HTTP::Params.encode(params)
+        query_params = URI::Params.encode(params)
 
         request(:get, "time_off/whos_out", query_params: query_params)
       end

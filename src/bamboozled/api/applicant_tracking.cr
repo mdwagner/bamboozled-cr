@@ -14,7 +14,7 @@ module Bamboozled
           "sortOrder"    => "ASC",     # "ASC", "DESC"
         }
         params.merge!(param_filters) if param_filters
-        query_params = HTTP::Params.encode(params)
+        query_params = URI::Params.encode(params)
 
         request(:get, "applicant_tracking/jobs", query_params: query_params)
       end
@@ -34,7 +34,7 @@ module Bamboozled
             "sortOrder" => "ASC",          # "ASC", "DESC"
           }
           params.merge!(param_filters) if param_filters
-          query_params = HTTP::Params.encode(params)
+          query_params = URI::Params.encode(params)
 
           res = request(:get, "applicant_tracking/applications", query_params: query_params)
           response = response.copy_with(headers: res.headers, json: res.json)
