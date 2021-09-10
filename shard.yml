@@ -7,7 +7,7 @@ authors:
 description: |
   A Crystal wrapper for the BambooHR API http://www.bamboohr.com/
 
-crystal: ">= 1.0.0, < 2.0.0"
+crystal: ">= 1.0.0"
 
 license: MIT
 

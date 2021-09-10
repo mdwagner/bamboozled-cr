@@ -1,4 +1,4 @@
-# Introduction
+# bamboozled-cr
 
 Bamboozled-cr is a Crystal port of the Ruby wrapper [Bamboozled](https://github.com/Skookum/bamboozled).
 
@@ -8,7 +8,7 @@ Both are an HTTP Client library for the [BambooHR API](https://documentation.bam
 
 1. Add the dependency to your `shard.yml`:
 
-```yaml
+```yml
 dependencies:
   bamboozled:
     github: mdwagner/bamboozled-cr
