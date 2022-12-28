@@ -1,6 +1,6 @@
 # bamboozled-cr
 
-Bamboozled-cr is a Crystal port of the Ruby wrapper [Bamboozled](https://github.com/Skookum/bamboozled).
+Bamboozled-cr is a Crystal port of the Ruby wrapper [Bamboozled](https://github.com/method-inc/bamboozled).
 
 Both are an HTTP Client library for the [BambooHR API](https://documentation.bamboohr.com/docs).
 
